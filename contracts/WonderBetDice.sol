@@ -1,7 +1,7 @@
 pragma solidity ^0.4.21;
 
 import "./usingOraclize.sol";
-import "./EOSBetBankroll.sol";
+import "./WonderBetBankroll.sol";
 import "./SafeMath.sol";
 
 contract EOSBetDice is usingOraclize, EOSBetGameInterface {
