@@ -2,7 +2,7 @@ pragma solidity ^0.4.21;
 
 import "./SafeMath.sol";
 
-contract EOSBetGameInterface {
+contract WonderBetGameInterface {
 	uint256 public DEVELOPERSFUND;
 	uint256 public LIABILITIES;
 	function payDevelopersFund(address developer) public;
@@ -10,7 +10,7 @@ contract EOSBetGameInterface {
 	function getMaxWin() public view returns(uint256);
 }
 
-contract EOSBetBankrollInterface {
+contract WonderBetBankrollInterface {
 	function payEtherToWinner(uint256 amtEther, address winner) public;
 	function receiveEtherFromGameAddress() payable public;
 	function payOraclize(uint256 amountToPay) public;
@@ -28,11 +28,11 @@ contract ERC20 {
 	event Approval(address indexed _owner, address indexed _spender, uint _value);
 }
 
-contract EOSBetBankroll is ERC20, EOSBetBankrollInterface {
+contract WonderBetBankroll is ERC20, WonderBetBankrollInterface {
 
 	using SafeMath for *;
 
-	// constants for EOSBet Bankroll
+	// constants for WonderBet Bankroll
 
 	address public OWNER;
 	uint256 public MAXIMUMINVESTMENTSALLOWED;
@@ -52,8 +52,8 @@ contract EOSBetBankroll is ERC20, EOSBetBankrollInterface {
 	mapping(address => uint256) contributionTime;
 
 	// constants for ERC20 standard
-	string public constant name = "EOSBet Stake Tokens";
-	string public constant symbol = "EOSBETST";
+	string public constant name = "WonderBet Stake Tokens";
+	string public constant symbol = "WonderBetST";
 	uint8 public constant decimals = 18;
 	// variable total supply
 	uint256 public totalSupply;
@@ -67,7 +67,7 @@ contract EOSBetBankroll is ERC20, EOSBetBankrollInterface {
 	event CashOut(address contributor, uint256 etherWithdrawn, uint256 tokensCashedIn);
 	event FailedSend(address sendTo, uint256 amt);
 
-	// checks that an address is a "trusted address of a legitimate EOSBet game"
+	// checks that an address is a "trusted address of a legitimate WonderBet game"
 	modifier addressInTrustedAddresses(address thisAddress){
 
 		require(TRUSTEDADDRESSES[thisAddress]);
@@ -75,7 +75,7 @@ contract EOSBetBankroll is ERC20, EOSBetBankrollInterface {
 	}
 
 	// initialization function 
-	function EOSBetBankroll(address dice, address slots) public payable {
+	function WonderBetBankroll(address dice, address slots) public payable {
 		// function is payable, owner of contract MUST "seed" contract with some ether, 
 		// so that the ratios are correct when tokens are being minted
 		require (msg.value > 0);
@@ -144,7 +144,7 @@ contract EOSBetBankroll is ERC20, EOSBetBankrollInterface {
 
 	function payOraclize(uint256 amountToPay) public addressInTrustedAddresses(msg.sender){
 		// this function will get called when a game contract must pay payOraclize
-		EOSBetGameInterface(msg.sender).receivePaymentForOraclize.value(amountToPay)();
+		WonderBetGameInterface(msg.sender).receivePaymentForOraclize.value(amountToPay)();
 	}
 
 	///////////////////////////////////////////////
@@ -152,7 +152,7 @@ contract EOSBetBankroll is ERC20, EOSBetBankrollInterface {
 	///////////////////////////////////////////////
 
 
-	// this function ADDS to the bankroll of EOSBet, and credits the bankroller a proportional
+	// this function ADDS to the bankroll of WonderBet, and credits the bankroller a proportional
 	// amount of tokens so they may withdraw their tokens later
 	// also if there is only a limited amount of space left in the bankroll, a user can just send as much 
 	// ether as they want, because they will be able to contribute up to the maximum, and then get refunded the rest.
@@ -219,7 +219,7 @@ contract EOSBetBankroll is ERC20, EOSBetBankrollInterface {
 		emit Transfer(0x0, msg.sender, creditedTokens);
 	}
 
-	function cashoutEOSBetStakeTokens(uint256 _amountTokens) public {
+	function cashoutWonderBetStakeTokens(uint256 _amountTokens) public {
 		// In effect, this function is the OPPOSITE of the un-named payable function above^^^
 		// this allows bankrollers to "cash out" at any time, and receive the ether that they contributed, PLUS
 		// a proportion of any ether that was earned by the smart contact when their ether was "staking", However
@@ -266,10 +266,10 @@ contract EOSBetBankroll is ERC20, EOSBetBankrollInterface {
 	}
 
 	// TO CALL THIS FUNCTION EASILY, SEND A 0 ETHER TRANSACTION TO THIS CONTRACT WITH EXTRA DATA: 0x7a09588b
-	function cashoutEOSBetStakeTokens_ALL() public {
+	function cashoutWonderBetStakeTokens_ALL() public {
 
-		// just forward to cashoutEOSBetStakeTokens with input as the senders entire balance
-		cashoutEOSBetStakeTokens(balances[msg.sender]);
+		// just forward to cashoutWonderBetStakeTokens with input as the senders entire balance
+		cashoutWonderBetStakeTokens(balances[msg.sender]);
 	}
 
 	////////////////////
@@ -313,8 +313,8 @@ contract EOSBetBankroll is ERC20, EOSBetBankrollInterface {
 		require(msg.sender == OWNER);
 
 		// first get developers fund from each game 
-        EOSBetGameInterface(DICE).payDevelopersFund(receiver);
-		EOSBetGameInterface(SLOTS).payDevelopersFund(receiver);
+        WonderBetGameInterface(DICE).payDevelopersFund(receiver);
+		WonderBetGameInterface(SLOTS).payDevelopersFund(receiver);
 
 		// now send the developers fund from the main contract.
 		uint256 developersFund = DEVELOPERSFUND;

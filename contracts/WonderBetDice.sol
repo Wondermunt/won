@@ -4,7 +4,7 @@ import "./usingOraclize.sol";
 import "./WonderBetBankroll.sol";
 import "./SafeMath.sol";
 
-contract EOSBetDice is usingOraclize, EOSBetGameInterface {
+contract WonderBetDice is usingOraclize, WonderBetGameInterface {
 
 	using SafeMath for *;
 
@@ -56,7 +56,7 @@ contract EOSBetDice is usingOraclize, EOSBetGameInterface {
 	address public BANKROLLER;
 
 	// constructor
-	function EOSBetDice() public {
+	function WonderBetDice() public {
 		// ledger proof is ALWAYS verified on-chain
 		oraclize_setProof(proofType_Ledger);
 
@@ -103,7 +103,7 @@ contract EOSBetDice is usingOraclize, EOSBetGameInterface {
 	////////////////////////////////////
 
 	function getMaxWin() public view returns(uint256){
-		return (SafeMath.mul(EOSBetBankrollInterface(BANKROLLER).getBankroll(), MAXWIN_inTHOUSANDTHPERCENTS) / 1000);
+		return (SafeMath.mul(WonderBetBankrollInterface(BANKROLLER).getBankroll(), MAXWIN_inTHOUSANDTHPERCENTS) / 1000);
 	}
 
 	////////////////////////////////////
@@ -118,7 +118,7 @@ contract EOSBetDice is usingOraclize, EOSBetGameInterface {
 		// check here to make sure that the bankroll contract is legitimate
 		// just make sure that calling the bankroll contract getBankroll() returns non-zero
 
-		require(EOSBetBankrollInterface(bankrollAddress).getBankroll() != 0);
+		require(WonderBetBankrollInterface(bankrollAddress).getBankroll() != 0);
 
 		BANKROLLER = bankrollAddress;
 	}
@@ -244,7 +244,7 @@ contract EOSBetDice is usingOraclize, EOSBetGameInterface {
 
 		uint256 gasToSend = INITIALGASFORORACLIZE + (uint256(1005) * rolls);
 
-		EOSBetBankrollInterface(BANKROLLER).payOraclize(oraclize_getPrice('random', gasToSend));
+		WonderBetBankrollInterface(BANKROLLER).payOraclize(oraclize_getPrice('random', gasToSend));
 
 		// oraclize_newRandomDSQuery(delay in seconds, bytes of random data, gas for callback function)
 		bytes32 oraclizeQueryId = oraclize_newRandomDSQuery(0, 30, gasToSend);
@@ -368,17 +368,17 @@ contract EOSBetDice is usingOraclize, EOSBetGameInterface {
 			// add the devs cut to the developers fund.
 			DEVELOPERSFUND = SafeMath.add(DEVELOPERSFUND, developersCut);
 
-			EOSBetBankrollInterface(BANKROLLER).receiveEtherFromGameAddress.value(SafeMath.sub(data.etherReceived, developersCut))();
+			WonderBetBankrollInterface(BANKROLLER).receiveEtherFromGameAddress.value(SafeMath.sub(data.etherReceived, developersCut))();
 
 			// force the bankroller contract to pay out the player
-			EOSBetBankrollInterface(BANKROLLER).payEtherToWinner(etherAvailable, data.player);
+			WonderBetBankrollInterface(BANKROLLER).payEtherToWinner(etherAvailable, data.player);
 
 			// log an event, now with the oraclize query id
 			emit DiceLargeBet(_queryId, gamesPlayed, logsData[0], logsData[1], logsData[2], logsData[3]);
 		}
 	}
 
-// END OF CONTRACT. REPORT ANY BUGS TO DEVELOPMENT@EOSBET.IO
+// END OF CONTRACT. REPORT ANY BUGS TO DEVELOPMENT@WonderBet.IO
 // YES! WE _DO_ HAVE A BUG BOUNTY PROGRAM!
 
 // THANK YOU FOR READING THIS CONTRACT, HAVE A NICE DAY :)

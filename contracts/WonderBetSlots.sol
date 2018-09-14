@@ -4,7 +4,7 @@ import "./usingOraclize.sol";
 import "./WonderBetBankroll.sol";
 import "./SafeMath.sol";
 
-contract EOSBetSlots is usingOraclize, EOSBetGameInterface {
+contract WonderBetSlots is usingOraclize, WonderBetGameInterface {
 
 	using SafeMath for *;
 
@@ -53,7 +53,7 @@ contract EOSBetSlots is usingOraclize, EOSBetGameInterface {
 	address public BANKROLLER;
 
 	// constructor
-	function EOSBetSlots() public {
+	function WonderBetSlots() public {
 		// ledger proof is ALWAYS verified on-chain
 		oraclize_setProof(proofType_Ledger);
 
@@ -99,7 +99,7 @@ contract EOSBetSlots is usingOraclize, EOSBetGameInterface {
 	////////////////////////////////////
 
 	function getMaxWin() public view returns(uint256){
-		return (SafeMath.mul(EOSBetBankrollInterface(BANKROLLER).getBankroll(), MAXWIN_inTHOUSANDTHPERCENTS) / 1000);
+		return (SafeMath.mul(WonderBetBankrollInterface(BANKROLLER).getBankroll(), MAXWIN_inTHOUSANDTHPERCENTS) / 1000);
 	}
 
 	////////////////////////////////////
@@ -114,7 +114,7 @@ contract EOSBetSlots is usingOraclize, EOSBetGameInterface {
 		// check here to make sure that the bankroll contract is legitimate
 		// just make sure that calling the bankroll contract getBankroll() returns non-zero
 
-		require(EOSBetBankrollInterface(bankrollAddress).getBankroll() != 0);
+		require(WonderBetBankrollInterface(bankrollAddress).getBankroll() != 0);
 
 		BANKROLLER = bankrollAddress;
 	}
@@ -227,7 +227,7 @@ contract EOSBetSlots is usingOraclize, EOSBetGameInterface {
 
 		uint256 gasToSend = INITIALGASFORORACLIZE + (uint256(3270) * credits);
 
-		EOSBetBankrollInterface(BANKROLLER).payOraclize(oraclize_getPrice('random', gasToSend));
+		WonderBetBankrollInterface(BANKROLLER).payOraclize(oraclize_getPrice('random', gasToSend));
 
 		// oraclize_newRandomDSQuery(delay in seconds, bytes of random data, gas for callback function)
 		bytes32 oraclizeQueryId = oraclize_newRandomDSQuery(0, 30, gasToSend);
@@ -385,12 +385,12 @@ contract EOSBetSlots is usingOraclize, EOSBetGameInterface {
 
 			DEVELOPERSFUND = SafeMath.add(DEVELOPERSFUND, developersCut);
 
-			EOSBetBankrollInterface(BANKROLLER).receiveEtherFromGameAddress.value(SafeMath.sub(data.etherReceived, developersCut))();
+			WonderBetBankrollInterface(BANKROLLER).receiveEtherFromGameAddress.value(SafeMath.sub(data.etherReceived, developersCut))();
 
 			// get the ether to be paid out, and force the bankroller contract to pay out the player
 			uint256 etherPaidout = SafeMath.mul((data.etherReceived / data.credits), payout);
 
-			EOSBetBankrollInterface(BANKROLLER).payEtherToWinner(etherPaidout, data.player);
+			WonderBetBankrollInterface(BANKROLLER).payEtherToWinner(etherPaidout, data.player);
 
 			// log en event with indexed query id
 			emit SlotsLargeBet(_queryId, logsData[0], logsData[1], logsData[2], logsData[3], logsData[4], logsData[5], logsData[6], logsData[7]);
