@@ -1,4 +1,4 @@
-# Wwlcome to wonderbet.io!!!
+# Welcome to wonderbet.io!!!
 
 ## This is the directory for our Ethereum Gambling contracts.
 
